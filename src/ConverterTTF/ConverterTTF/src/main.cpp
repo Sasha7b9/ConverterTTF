@@ -12,12 +12,55 @@ struct Bitmap
     unsigned char*  buffer;
 };
 
+//-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+int GetBit(unsigned char *buffer, int numBit)
+{
+    while (numBit > 7)
+    {
+        buffer++;
+        numBit -= 8;
+    }
+
+    return ((*buffer) >> numBit) & 0x01;
+}
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-void DrawBitmap(FT_Bitmap *bitmap, int x, int y)
+void DrawRow(unsigned char *buffer, int numBits)
 {
-
+    for (int i = 0; i < numBits; i++)
+    {
+        if (GetBit(buffer, i))
+        {
+            printf("1");
+        }
+        else
+        {
+            printf(".");
+        }
+    }
+    
+    printf("\n");
 }
+
+//-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+void DrawSymbol(unsigned char *buffer, int width, int height)
+{
+    int bytesInRow = (width + 8) / 8;
+
+    if ((width % 8) == 0)
+    {
+        bytesInRow = width / 8;
+    }
+
+    for (int i = 0; i < height; i++)
+    {
+        DrawRow(buffer, width);
+        buffer += bytesInRow;
+    }
+
+    printf("\n");
+}
+
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 FT_Error GlyphToBitmap(FT_Glyph glyf, Bitmap *target, int *left, int *top, int *x_advance, int *y_advance)
@@ -58,7 +101,7 @@ int main()
     FT_Error     error;
     int          x, y;
 
-    const char *text = "Test string";
+    const char *text = "0123456789.,;:";
 
     if (FT_Init_FreeType(&library))
     {
@@ -124,10 +167,10 @@ int main()
         FT_BitmapGlyph bitmap = (FT_BitmapGlyph)glyf;
         FT_Bitmap *source = &bitmap->bitmap;
 
-        source = source;
+        DrawSymbol(source->buffer, source->width, source->rows);
 
-        x += slot->advance.x >> 6;
-        y += slot->advance.y >> 6;
+        x += slot->advance.x >> 16;
+        y += slot->advance.y >> 16;
     }
 
     return 0;

@@ -101,8 +101,8 @@ int main()
     FT_Error     error;
     int          x, y;
 
-    //const char *text = "0123456789.,;:";
-    const wchar_t *text = L"0123456789";
+    const wchar_t *text = L"0123456789.,;:";
+    //const wchar_t *text = L"A";
 
     if (FT_Init_FreeType(&library))
     {
@@ -143,9 +143,11 @@ int main()
 
     printf("\n");
 
-    for (unsigned n = 0; n < 10; n++)
+    for (unsigned n = 0; n < 5; n++)
     {
         FT_UInt glyph_index = FT_Get_Char_Index(face, text[n]);
+
+        //FT_UInt glyph_index = n + 0x0401;
 
         error = FT_Load_Glyph(face, glyph_index, FT_LOAD_DEFAULT);
         if (error)

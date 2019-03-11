@@ -21,7 +21,7 @@ int GetBit(unsigned char *buffer, int numBit)
         numBit -= 8;
     }
 
-    return ((*buffer) >> numBit) & 0x01;
+    return ((*buffer) >> (8 - numBit)) & 0x01;
 }
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -35,7 +35,7 @@ void DrawRow(unsigned char *buffer, int numBits)
         }
         else
         {
-            printf(" ");
+            printf(".");
         }
     }
     
@@ -131,6 +131,16 @@ int main()
 
     x = 300;
     y = 200;
+
+    for (int i = 0; i < 3; i++)
+    {
+        for (int s = 0; s < 10; s++)
+        {
+            printf("%c", s | 0x30);
+        }
+    }
+
+    printf("\n");
 
     for (unsigned n = 0; n < 5; n++)
     {

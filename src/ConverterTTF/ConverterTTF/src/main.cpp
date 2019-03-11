@@ -1,5 +1,16 @@
 #include <ft2build.h>
 #include FT_FREETYPE_H
+#include FT_GLYPH_H
+
+
+struct Bitmap
+{
+    int             rows;
+    int             width;
+    int             pitch;
+    int             grays;
+    unsigned char*  buffer;
+};
 
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -8,6 +19,35 @@ void DrawBitmap(FT_Bitmap *bitmap, int x, int y)
 
 }
 
+//-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+FT_Error GlyphToBitmap(FT_Glyph glyf, Bitmap *target, int *left, int *top, int *x_advance, int *y_advance)
+{
+    FT_Error error = FT_Err_Ok;
+
+    error = FT_Glyph_To_Bitmap(&glyf, FT_RENDER_MODE_MONO, NULL, 0);
+
+    if (error)
+    {
+        return error;
+    }
+
+    FT_BitmapGlyph bitmap = (FT_BitmapGlyph)glyf;
+    FT_Bitmap *source = &bitmap->bitmap;
+
+    target->rows = (int)source->rows;
+    target->width = (int)source->width;
+    target->pitch = source->pitch;
+    target->buffer = source->buffer;
+    target->grays = source->num_grays;
+
+    *left = bitmap->left;
+    *top = bitmap->top;
+
+    *x_advance = (glyf->advance.x + 0x8000) >> 16;
+    *y_advance = (glyf->advance.y + 0x8000) >> 16;
+
+    return error;
+}
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 int main()
@@ -65,7 +105,26 @@ int main()
             continue;
         }
 
-        DrawBitmap(&slot->bitmap, x + slot->bitmap_left, y - slot->bitmap_top);
+        FT_Glyph glyf;
+
+        error = FT_Get_Glyph(slot, &glyf);
+
+        if (error)
+        {
+            printf("Can not get glyph");
+        }
+
+        error = FT_Glyph_To_Bitmap(&glyf, FT_RENDER_MODE_MONO, NULL, 0);
+
+        if (error)
+        {
+            printf("Can not do glyph to bitmap");
+        }
+
+        FT_BitmapGlyph bitmap = (FT_BitmapGlyph)glyf;
+        FT_Bitmap *source = &bitmap->bitmap;
+
+        source = source;
 
         x += slot->advance.x >> 6;
         y += slot->advance.y >> 6;

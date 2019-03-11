@@ -21,7 +21,7 @@ int GetBit(unsigned char *buffer, int numBit)
         numBit -= 8;
     }
 
-    return ((*buffer) >> (8 - numBit)) & 0x01;
+    return ((*buffer) >> (7 - numBit)) & 0x01;
 }
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -101,7 +101,8 @@ int main()
     FT_Error     error;
     int          x, y;
 
-    const char *text = "0123456789.,;:";
+    //const char *text = "0123456789.,;:";
+    const wchar_t *text = L"0123456789";
 
     if (FT_Init_FreeType(&library))
     {
@@ -127,7 +128,7 @@ int main()
 
     error = FT_Set_Char_Size(face, 0, 16 * 64, 300, 300);
 
-    //error = FT_Set_Pixel_Sizes(face, 0, 16);
+    //error = FT_Set_Pixel_Sizes(face, 16, 16);
 
     x = 300;
     y = 200;
@@ -142,7 +143,7 @@ int main()
 
     printf("\n");
 
-    for (unsigned n = 0; n < 5; n++)
+    for (unsigned n = 0; n < 10; n++)
     {
         FT_UInt glyph_index = FT_Get_Char_Index(face, text[n]);
 

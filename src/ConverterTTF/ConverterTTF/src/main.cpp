@@ -31,11 +31,11 @@ void DrawRow(unsigned char *buffer, int numBits)
     {
         if (GetBit(buffer, i))
         {
-            printf("1");
+            printf("8");
         }
         else
         {
-            printf(".");
+            printf(" ");
         }
     }
     
@@ -127,12 +127,12 @@ int main()
 
     error = FT_Set_Char_Size(face, 0, 16 * 64, 300, 300);
 
-    error = FT_Set_Pixel_Sizes(face, 0, 16);
+    //error = FT_Set_Pixel_Sizes(face, 0, 16);
 
     x = 300;
     y = 200;
 
-    for (unsigned n = 0; n < strlen(text); n++)
+    for (unsigned n = 0; n < 5; n++)
     {
         FT_UInt glyph_index = FT_Get_Char_Index(face, text[n]);
 
@@ -142,7 +142,7 @@ int main()
             continue;
         }
 
-        error = FT_Render_Glyph(slot, FT_RENDER_MODE_NORMAL);
+        error = FT_Render_Glyph(slot, FT_RENDER_MODE_MONO);
         if (error)
         {
             continue;

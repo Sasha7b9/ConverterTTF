@@ -31,11 +31,11 @@ void DrawRow(unsigned char *buffer, int numBits)
     {
         if (GetBit(buffer, i))
         {
-            printf("8");
+            printf("*");
         }
         else
         {
-            printf(".");
+            printf(" ");
         }
     }
     

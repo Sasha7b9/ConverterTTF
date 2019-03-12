@@ -1,0 +1,23 @@
+:Base scripts.hlp
+:Title Объектная модель редактора SG Bitmap Font Editor
+1 Общее описание=first_steps
+1 Объект SGBitmapFontServer
+2 Свойства=SGBitmapFontServer_Properties
+2 Методы
+3 GetSymbolObject=SGBitmapFontServer_GetSymbolObject
+3 ShowMessage=SGBitmapFontServer_ShowMessage
+3 SaveUndoState=SGBitmapFontServer_SaveUndoState
+1 Объект SGBitmapSymbol
+2 Свойства=SGBitmapSymbol_Properties
+2 Методы
+3 CopyRect=SGBitmapSymbol_CopyRect
+3 ClearRect=SGBitmapSymbol_ClearRect
+3 RemoveLines=SGBitmapSymbol_RemoveLines
+3 Rotate=SGBitmapSymbol_Rotate
+3 MirrorRect=SGBitmapSymbol_MirrorRect
+3 LoadSymbol=SGBitmapSymbol_LoadSymbol
+3 StoreSymbol=SGBitmapSymbol_StoreSymbol
+3 InsertLines=SGBitmapSymbol_InsertLines
+3 GetPictureBegin=SGBitmapSymbol_GetPictureBegin
+3 GetPictureEnd=SGBitmapSymbol_GetPictureEnd
+3 Scroll=SGBitmapSymbol_Scroll

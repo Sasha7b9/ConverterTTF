@@ -1,13 +1,26 @@
 import os
 from struct import *
 
+#######################################################################
+_symbols = []     # Здесь содержимое файла
+_offset = 0       # Смщещение картинки относительно начала файла
+_numColors = 0    # Количество цветов в картинкe
+_width = 0        # Ширина картинки в пикселях
+_height = 0       # Высота картинки в пикселях
+
+
+
+########################################################################
+
+
+
 # Читать 16 бит из массива
-def ReadHalfWord(symbols, index):
-    return symbols[index] + symbols[index + 1] * 256
+def ReadHalfWord(index):
+    return _symbols[index] + _symbols[index + 1] * 256
 
 # Читатать 32 бита из массива
-def ReadWord(symbols, index):
-    return ReadHalfWord(symbols, index) + ReadHalfWord(symbols, index + 2) * 256 * 256
+def ReadWord(index):
+    return ReadHalfWord(index) + ReadHalfWord(index + 2) * 256 * 256
 
 # Чтение изображения из файла
 def ReadFile():
@@ -20,45 +33,43 @@ def ReadFile():
     return symbols
 
 # Расчёт смещения начала пикселей
-def CalculateOffset(symbols):
-    return ReadWord(symbols, 0x0a)
+def CalculateOffset():
+    return ReadWord(0x0a)
 
 # Расчёт количества цветов в картинке
-def CalculateNumColors(symbols, index):
+def CalculateNumColors(index):
     colors = []                             # Список цветов
-    while index < len(symbols):
-        color = symbols[index]
+    while index < len(_symbols):
+        color = _symbols[index]
         if colors.count(color) == 0:
             colors.append(color)
         index += 1
     return len(colors)
 
 # Возвращает ширину изображения в пикселях
-def GetWidthPicture(symbols):
-    return ReadWord(symbols, 0x12)
+def GetWidthPicture():
+    return ReadWord(0x12)
 
 # Возвращает высоту изображения в пикселях
-def GetHeightPicture(symbols):
-    return ReadWord(symbols, 0x16)
+def GetHeightPicture():
+    return ReadWord(0x16)
 
 
 
 ###### Start here ######
 
+_symbols = ReadFile()
 
+_offset = CalculateOffset()
 
-symbols = ReadFile()
+_numColors = CalculateNumColors(_offset)
 
-offset = CalculateOffset(symbols)
+_width = GetWidthPicture()
 
-numColors = CalculateNumColors(symbols, offset)
+_height = GetHeightPicture()
 
-width = GetWidthPicture(symbols)
+print("offset ", _offset)
 
-height = GetHeightPicture(symbols)
+print("number colors ", _numColors)
 
-print("offset ", offset)
-
-print("number colors ", numColors)
-
-print("size picture ", width, " x ", height)
+print("size picture ", _width, " x ", _height)

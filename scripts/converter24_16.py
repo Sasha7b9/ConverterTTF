@@ -49,7 +49,10 @@ def CalculateNumColors(index):
 
 # Возвращает ширину изображения в пикселях
 def GetWidthPicture():
-    return ReadWord(0x12)
+    width = ReadWord(0x12)
+    while width % 4 != 0:
+        width += 1
+    return width
 
 # Возвращает высоту изображения в пикселях
 def GetHeightPicture():
@@ -57,37 +60,54 @@ def GetHeightPicture():
 
 # Возвращает значение пикселя в точке x, y
 def GetPoint(x, y):
-    return _symbols[_offset + x + y * _width]
+    return _symbols[_offset + x + (_height - y - 1) * _width]
 
-# Расчёт смещений между глефами
+# Расчёт смещения X между глефами
 def CalculateOffsetX():
     x1 = 0;
     x2 = 0;
     for x in range(_width):
-        if GetPoint(x, 149) == _colors[1] or GetPoint(x, 149) == _colors[2]:    # Первое вхождение в глиф
+        if GetPoint(x, 1) == _colors[1] or GetPoint(x, 1) == _colors[2]:    # Первое вхождение в глиф
             x1 = x
-            print("find x1 ", x1)
             break
     for x in range(x1, _width):
-        if GetPoint(x, 149) == _colors[0]:    # Вышли за глиф
+        if GetPoint(x, 1) == _colors[0]:    # Вышли за глиф
             x2 = x
-            print("find first x2 ", x2)
             break
     for x in range(x2, _width):
-        if GetPoint(x, 149) == _colors[1] or GetPoint(x, 149) == _colors[2]:    # Вошли в следующий глиф
+        if GetPoint(x, 1) == _colors[1] or GetPoint(x, 1) == _colors[2]:    # Вошли в следующий глиф
             x2 = x
-            print("find second x2 ", x2)
             break
     return x2 - x1
 
+# Расчёт смещения Y между глефами
+def CalculateOffsetY():
+    y1 = 0;
+    y2 = 0;
+    for y in range(_height):
+        if GetPoint(1, y) == _colors[1] or GetPoint(1, y) == _colors[2]:    # Первое вхождение в глиф
+            y1 = y
+            break
+    for y in range(y1, _height):
+        if GetPoint(1, y) == _colors[0]:    # Вышли за глиф
+            y2 = y
+            break
+    for y in range(y2, _height):
+        if GetPoint(1, y) == _colors[1] or GetPoint(1, y) == _colors[2]:    # Вошли в следующий глиф
+            y2 = y
+            break
+    return y2 - y1
+
+
+# Рисует левый верхний угол изображения
 def Dump(sizeX, sizeY):
     for y in range(sizeY):
         for x in range(sizeX):
             color = GetPoint(x, y)
             if color == _colors[0]:
-                print('*', end = '')
+                print('8', end = '')
             if color == _colors[1]:
-                print('.', end = '')
+                print('*', end = '')
             if color == _colors[2]:
                 print(' ', end = '')
         print()
@@ -107,6 +127,10 @@ _width = GetWidthPicture()
 
 _height = GetHeightPicture()
 
+_dX = CalculateOffsetX()
+
+_dY = CalculateOffsetY()
+
 print("offset ", _offset)
 
 print("number colors ", _numColors)
@@ -115,9 +139,8 @@ print("size picture ", _width, " x ", _height)
 
 print("colors - ", _colors[0], " ", _colors[1], " ", _colors[2])
 
-_dX = CalculateOffsetX()
-
 print("dX = ", _dX, ", dY = ", _dY)
 
-Dump(70, 70)
+# Dump(70, 151)
+
 

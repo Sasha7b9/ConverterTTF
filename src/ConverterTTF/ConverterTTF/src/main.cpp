@@ -1,4 +1,4 @@
-#include <ft2build.h>
+﻿#include <ft2build.h>
 #include FT_FREETYPE_H
 #include FT_GLYPH_H
 
@@ -35,7 +35,7 @@ void DrawRow(unsigned char *buffer, int numBits)
         }
         else
         {
-            printf(" ");
+            printf(".");
         }
     }
     
@@ -101,15 +101,14 @@ int main()
     FT_Error     error;
     int          x, y;
 
-    const wchar_t *text = L"0123456789.,;:";
-    //const wchar_t *text = L"A";
+    const wchar_t *text = L"0123456789";
 
     if (FT_Init_FreeType(&library))
     {
         printf("Can not initialize FreeType library");
     }
 
-    error = FT_New_Face(library, "../../../font/AGENCYB.TTF", 0, &face);
+    error = FT_New_Face(library, "../../../font/TECH__28.TTF", 0, &face);
     if (error == FT_Err_Unknown_File_Format)
     {
         printf("Font file could be opened and read, but it appears that, its, font format is unsupported");
@@ -124,12 +123,6 @@ int main()
         return 0;
     }
 
-    FT_GlyphSlot slot = face->glyph;
-
-    error = FT_Set_Char_Size(face, 0, 16 * 64, 300, 300);
-
-    //error = FT_Set_Pixel_Sizes(face, 16, 16);
-
     x = 300;
     y = 200;
 
@@ -143,36 +136,40 @@ int main()
 
     printf("\n");
 
-    for (unsigned n = 0; n < 5; n++)
+    if (FT_Set_Char_Size(face, 32, 32 * 64, 600, 600))
+    {
+        printf("can not set char size");
+    }
+
+    if (FT_Set_Pixel_Sizes(face, 32, 64))
+    {
+        printf("can nont set pixel sizes");
+    }
+
+    for (unsigned n = 0; n < 10; n++)
     {
         FT_UInt glyph_index = FT_Get_Char_Index(face, text[n]);
 
-        //FT_UInt glyph_index = n + 0x0401;
-
-        error = FT_Load_Glyph(face, glyph_index, FT_LOAD_DEFAULT);
-        if (error)
+        if (FT_Load_Glyph(face, glyph_index, FT_LOAD_DEFAULT))
         {
             continue;
         }
 
-        error = FT_Render_Glyph(slot, FT_RENDER_MODE_MONO);
-        if (error)
+        FT_GlyphSlot slot = face->glyph;
+
+        if (FT_Render_Glyph(slot, FT_RENDER_MODE_MONO))
         {
             continue;
         }
 
         FT_Glyph glyf;
 
-        error = FT_Get_Glyph(slot, &glyf);
-
-        if (error)
+        if (FT_Get_Glyph(slot, &glyf))
         {
             printf("Can not get glyph");
         }
 
-        error = FT_Glyph_To_Bitmap(&glyf, FT_RENDER_MODE_MONO, NULL, 0);
-
-        if (error)
+        if (FT_Glyph_To_Bitmap(&glyf, FT_RENDER_MODE_MONO, NULL, 0))
         {
             printf("Can not do glyph to bitmap");
         }
@@ -181,9 +178,6 @@ int main()
         FT_Bitmap *source = &bitmap->bitmap;
 
         DrawSymbol(source->buffer, source->width, source->rows);
-
-        x += slot->advance.x >> 16;
-        y += slot->advance.y >> 16;
     }
 
     return 0;
